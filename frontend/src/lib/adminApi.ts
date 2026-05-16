@@ -1,5 +1,5 @@
 import { api } from "./api";
-import type { Department, AcademicYear } from "./studentApi";
+import type { Department, AcademicYear, FieldDiff } from "./studentApi";
 
 export type Role = "ADMIN" | "FACULTY" | "STUDENT" | "ALUMNI";
 
@@ -47,6 +47,7 @@ export interface StudentListItem {
   resumeUrl: string | null;
   isVerified: boolean;
   isActive: boolean;
+  ambassadorAssignments: AmbassadorAssignment[];
   createdAt: string;
 }
 
@@ -68,6 +69,7 @@ export interface StudentListFilters {
   isActive?: boolean;
   minCgpa?: number;
   search?: string;
+  pendingEntity?: "PROFILE_OR_MARKS" | "INTERNSHIP" | "ACHIEVEMENT";
 }
 
 export interface StudentProject {
@@ -109,6 +111,68 @@ export interface StudentDetailResponse {
   projects: StudentProject[];
   pendingVerifications: Array<Record<string, unknown>>;
 }
+
+export interface StartupItem {
+  id: string;
+  name: string;
+  tagline: string | null;
+  industry: string | null;
+  website: string | null;
+  location: string | null;
+  contactName: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  foundedYear: number | null;
+  notes: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface StartupPayload {
+  name: string;
+  tagline?: string;
+  industry?: string;
+  website?: string;
+  location?: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  foundedYear?: number;
+  notes?: string;
+  isActive?: boolean;
+}
+
+export interface AmbassadorAssignment {
+  id: string;
+  roleName: string;
+  servedAcademicYear: string;
+  createdAt: string;
+  student: {
+    id: number;
+    fullName: string;
+    emailId: string;
+    studentId: string | null;
+    department: Department | null;
+    academicYear: AcademicYear | null;
+    profilePic: string | null;
+  };
+}
+
+export const AMBASSADOR_ROLE_OPTIONS = [
+  "TPO Head",
+  "TPO Co-Head",
+  "Magazine Team",
+  "Drive Team",
+  "Database Team",
+  "Industry Relation Team",
+  "LinkedIn Team",
+  "Coding Club Team",
+  "Media Team",
+  "Event Management Team",
+] as const;
+
+export type AmbassadorRole = (typeof AMBASSADOR_ROLE_OPTIONS)[number];
 
 export interface FacultyListItem {
   id: number;
@@ -198,6 +262,114 @@ export const rejectRegistration = async (
   await api.post(`/admin/registrations/${id}/reject`, { reason });
 };
 
+// ==================== ADMIN PENDING VERIFICATIONS ====================
+
+export interface AdminQueueStudentStub {
+  id: number;
+  fullName: string;
+  emailId: string;
+  studentId: string | null;
+  department: Department | null;
+  academicYear: AcademicYear | null;
+  profilePic: string | null;
+}
+
+interface AdminBaseQueueItem {
+  id: string;
+  entityType: string;
+  entityId: string | null;
+  createdAt: string;
+  student: AdminQueueStudentStub;
+}
+
+export interface AdminVerificationRequestItem extends AdminBaseQueueItem {
+  kind: "VERIFICATION_REQUEST";
+  entityType: "PROFILE" | "MARKS";
+  changes: Record<string, FieldDiff>;
+}
+
+export interface AdminInternshipQueueItem extends AdminBaseQueueItem {
+  kind: "INTERNSHIP";
+  entityType: "INTERNSHIP";
+  data: {
+    companyName: string;
+    role: string;
+    roleDescription: string | null;
+    duration: string | null;
+    startDate: string;
+    endDate: string | null;
+    certificateUrl: string | null;
+    hrName: string | null;
+    hrEmail: string | null;
+    hrPhone: string | null;
+  };
+}
+
+export interface AdminAchievementQueueItem extends AdminBaseQueueItem {
+  kind: "ACHIEVEMENT";
+  entityType: "ACHIEVEMENT";
+  data: {
+    title: string;
+    description: string | null;
+    category: string | null;
+    certificateUrl: string | null;
+    achievementDate: string | null;
+  };
+}
+
+export interface AdminCertificateQueueItem extends AdminBaseQueueItem {
+  kind: "CERTIFICATE";
+  entityType: "CERTIFICATE";
+  data: {
+    title: string;
+    issuingOrg: string;
+    issueDate: string | null;
+    expiryDate: string | null;
+    credentialId: string | null;
+    credentialUrl: string | null;
+    certificateUrl: string | null;
+  };
+}
+
+export type AdminQueueItem =
+  | AdminVerificationRequestItem
+  | AdminInternshipQueueItem
+  | AdminAchievementQueueItem
+  | AdminCertificateQueueItem;
+
+export const listAdminPendingVerifications = async (): Promise<AdminQueueItem[]> => {
+  const { data } = await api.get<{ items: AdminQueueItem[] }>("/admin/verifications");
+  return data.items;
+};
+
+export const adminReviewVerificationRequest = async (
+  id: string,
+  payload: { status: "APPROVED" | "REJECTED"; remarks?: string }
+): Promise<void> => {
+  await api.post(`/admin/verifications/${id}/review`, payload);
+};
+
+export const adminReviewInternship = async (
+  id: string,
+  payload: { isVerified: boolean; remarks?: string }
+): Promise<void> => {
+  await api.post(`/admin/internships/${id}/review`, payload);
+};
+
+export const adminReviewAchievement = async (
+  id: string,
+  payload: { isVerified: boolean; remarks?: string }
+): Promise<void> => {
+  await api.post(`/admin/achievements/${id}/review`, payload);
+};
+
+export const adminReviewCertificate = async (
+  id: string,
+  payload: { isVerified: boolean; remarks?: string }
+): Promise<void> => {
+  await api.post(`/admin/certificates/${id}/review`, payload);
+};
+
 export const listFaculty = async (): Promise<FacultyListItem[]> => {
   const { data } = await api.get<{ items: FacultyListItem[] }>("/admin/faculty");
   return data.items;
@@ -283,4 +455,44 @@ export const addStudentNote = async (studentId: number, content: string): Promis
 
 export const deleteStudentNote = async (studentId: number, noteId: string): Promise<void> => {
   await api.delete(`/admin/students/${studentId}/notes/${noteId}`);
+};
+
+export const listStartups = async (): Promise<StartupItem[]> => {
+  const { data } = await api.get<{ items: StartupItem[] }>("/admin/startups");
+  return data.items;
+};
+
+export const createStartup = async (payload: StartupPayload): Promise<StartupItem> => {
+  const { data } = await api.post<{ startup: StartupItem }>("/admin/startups", payload);
+  return data.startup;
+};
+
+export const updateStartup = async (
+  id: string,
+  payload: Partial<StartupPayload>
+): Promise<StartupItem> => {
+  const { data } = await api.patch<{ startup: StartupItem }>(`/admin/startups/${id}`, payload);
+  return data.startup;
+};
+
+export const deleteStartup = async (id: string): Promise<void> => {
+  await api.delete(`/admin/startups/${id}`);
+};
+
+export const listAmbassadors = async (): Promise<AmbassadorAssignment[]> => {
+  const { data } = await api.get<{ items: AmbassadorAssignment[] }>("/admin/ambassadors");
+  return data.items;
+};
+
+export const createAmbassadorAssignment = async (payload: {
+  studentId: number;
+  roleName: AmbassadorRole;
+  servedAcademicYear: string;
+}): Promise<AmbassadorAssignment> => {
+  const { data } = await api.post<{ assignment: AmbassadorAssignment }>("/admin/ambassadors", payload);
+  return data.assignment;
+};
+
+export const deleteAmbassadorAssignment = async (id: string): Promise<void> => {
+  await api.delete(`/admin/ambassadors/${id}`);
 };

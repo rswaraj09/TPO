@@ -29,6 +29,14 @@ const PROFILE_SELECT = {
   isHOD: true,
   isVerified: true,
   isActive: true,
+  ambassadorAssignments: {
+    select: {
+      id: true,
+      roleName: true,
+      servedAcademicYear: true,
+      createdAt: true,
+    },
+  },
   createdAt: true,
   updatedAt: true,
 };

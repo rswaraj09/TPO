@@ -6,6 +6,8 @@ import {
   Users,
   Briefcase,
   Calendar,
+  Rocket,
+  ShieldCheck,
   LogOut,
   ChevronLeft,
   ChevronRight,
@@ -20,7 +22,9 @@ export type AdminTab =
   | "students"
   | "faculty"
   | "jobs"
-  | "events";
+  | "events"
+  | "startups"
+  | "ambassadors";
 
 interface Item {
   key: AdminTab;
@@ -35,6 +39,8 @@ const items: Item[] = [
   { key: "faculty", label: "Faculty", icon: Users },
   { key: "jobs", label: "Jobs", icon: Briefcase },
   { key: "events", label: "Events", icon: Calendar },
+  { key: "startups", label: "Startups", icon: Rocket },
+  { key: "ambassadors", label: "Student Ambassador", icon: ShieldCheck },
 ];
 
 interface AdminSidebarProps {

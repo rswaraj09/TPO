@@ -215,11 +215,45 @@ model User {
 
   // Relations - certificates
   certificates          Certificate[]
+  ambassadorAssignments AmbassadorAssignment[]
 
   @@index([department])
   @@index([fullName])
   @@index([role])
   @@index([emailId])
+}
+
+model Startup {
+  id           String   @id @default(cuid())
+  name         String
+  tagline      String?
+  industry     String?
+  website      String?
+  location     String?
+  contactName  String?
+  contactEmail String?
+  contactPhone String?
+  foundedYear  Int?
+  notes        String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([name])
+  @@index([isActive])
+}
+
+model AmbassadorAssignment {
+  id                 String   @id @default(cuid())
+  studentId          Int
+  student            User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  roleName           String
+  servedAcademicYear String
+  createdAt          DateTime @default(now())
+
+  @@unique([studentId, roleName, servedAcademicYear])
+  @@index([studentId])
+  @@index([roleName])
 }
 
 // ==================== CERTIFICATE ====================

@@ -18,6 +18,11 @@ import {
   listStudents,
   getStudentDetail,
   graduateStudent,
+  listAdminPendingVerifications,
+  adminReviewVerificationRequest,
+  adminReviewInternship,
+  adminReviewAchievement,
+  adminReviewCertificate,
 } from "../controller/admin.students.controller";
 import {
   listStudentNotes,
@@ -41,6 +46,17 @@ import {
   cancelEvent,
   deleteEvent,
 } from "../controller/admin.events.controller";
+import {
+  listStartups,
+  createStartup,
+  updateStartup,
+  deleteStartup,
+} from "../controller/admin.startups.controller";
+import {
+  listAmbassadorAssignments,
+  createAmbassadorAssignment,
+  deleteAmbassadorAssignment,
+} from "../controller/admin.ambassadors.controller";
 
 const router = express.Router();
 
@@ -66,6 +82,13 @@ router.get("/students", listStudents);
 router.get("/students/:id", getStudentDetail);
 router.post("/students/:id/graduate", graduateStudent);
 
+// Admin verification queue (all departments)
+router.get("/verifications", listAdminPendingVerifications);
+router.post("/verifications/:id/review", adminReviewVerificationRequest);
+router.post("/internships/:id/review", adminReviewInternship);
+router.post("/achievements/:id/review", adminReviewAchievement);
+router.post("/certificates/:id/review", adminReviewCertificate);
+
 // Student notes
 router.get("/students/:id/notes", listStudentNotes);
 router.post("/students/:id/notes", addStudentNote);
@@ -90,5 +113,16 @@ router.post("/events", createEvent);
 router.patch("/events/:id", updateEvent);
 router.post("/events/:id/cancel", cancelEvent);
 router.delete("/events/:id", deleteEvent);
+
+// Startups
+router.get("/startups", listStartups);
+router.post("/startups", createStartup);
+router.patch("/startups/:id", updateStartup);
+router.delete("/startups/:id", deleteStartup);
+
+// Student ambassadors / volunteers
+router.get("/ambassadors", listAmbassadorAssignments);
+router.post("/ambassadors", createAmbassadorAssignment);
+router.delete("/ambassadors/:id", deleteAmbassadorAssignment);
 
 export default router;

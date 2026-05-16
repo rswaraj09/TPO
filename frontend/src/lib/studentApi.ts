@@ -34,6 +34,14 @@ export interface StudentProfile {
   isHOD: boolean;
   isVerified: boolean;
   isActive: boolean;
+  ambassadorAssignments: AmbassadorAssignment[];
+}
+
+export interface AmbassadorAssignment {
+  id: string;
+  roleName: string;
+  servedAcademicYear: AcademicYear;
+  createdAt: string;
 }
 
 export interface FieldDiff {

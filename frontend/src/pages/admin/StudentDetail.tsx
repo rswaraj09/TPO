@@ -247,6 +247,23 @@ export function StudentDetail() {
           )}
         </Section>
 
+        <Section title="Student Ambassador Roles">
+          {user.ambassadorAssignments && user.ambassadorAssignments.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {user.ambassadorAssignments.map((assignment) => (
+                <span
+                  key={assignment.id}
+                  className="inline-flex items-center rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-sm text-neutral-700"
+                >
+                  {assignment.roleName} · {assignment.servedAcademicYear.replace("_", " ")}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <EmptyRow label="No ambassador or volunteer roles assigned." />
+          )}
+        </Section>
+
         {/* Projects */}
         <Section title={`Projects (${projects.length})`}>
           {projects.length === 0 ? (

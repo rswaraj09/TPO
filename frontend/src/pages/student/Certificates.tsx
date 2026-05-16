@@ -62,7 +62,8 @@ export function Certificates() {
     <StudentLayout
       title="Certificates"
       subtitle="Manage your professional and academic certifications. These will be visible to recruiters."
-      actions={
+    >
+      <div className="mb-4 flex justify-end">
         <button
           onClick={() => {
             setEditingId(null);
@@ -73,8 +74,8 @@ export function Certificates() {
           <Plus className="h-4 w-4" />
           Add Certificate
         </button>
-      }
-    >
+      </div>
+
       {loading ? (
         <div className="flex items-center justify-center py-24">
           <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />

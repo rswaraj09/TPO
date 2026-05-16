@@ -67,6 +67,40 @@ export const listStudentsSchema = z.object({
   isActive: z.coerce.boolean().optional(),
   minCgpa: z.coerce.number().min(0).max(10).optional(),
   search: z.string().optional(),
+  pendingEntity: z.enum(["PROFILE_OR_MARKS", "INTERNSHIP", "ACHIEVEMENT"]).optional(),
+});
+
+export const startupSchema = z.object({
+  name: z.string().min(1),
+  tagline: z.string().optional(),
+  industry: z.string().optional(),
+  website: z.string().url().optional().or(z.literal("")),
+  location: z.string().optional(),
+  contactName: z.string().optional(),
+  contactEmail: z.string().email().optional().or(z.literal("")),
+  contactPhone: z.string().optional(),
+  foundedYear: z.coerce.number().int().min(1900).max(2100).optional(),
+  notes: z.string().optional(),
+  isActive: z.boolean().optional(),
+});
+
+export const ambassadorRoleValues = [
+  "TPO Head",
+  "TPO Co-Head",
+  "Magazine Team",
+  "Drive Team",
+  "Database Team",
+  "Industry Relation Team",
+  "LinkedIn Team",
+  "Coding Club Team",
+  "Media Team",
+  "Event Management Team",
+] as const;
+
+export const ambassadorAssignmentSchema = z.object({
+  studentId: z.coerce.number().int().positive(),
+  roleName: z.enum(ambassadorRoleValues),
+  servedAcademicYear: z.string().regex(/^\d{4}-\d{2}$/, "Format must be YYYY-YY e.g. 2024-25"),
 });
 
 // ==================== PROFILE UPDATE ====================

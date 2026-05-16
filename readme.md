@@ -9,22 +9,6 @@ Role-based Training & Placement Office portal for Vishwaniketan iMEET — Studen
 | Backend | Express.js 5, TypeScript, Prisma 6, PostgreSQL, Zod 4, JWT (HTTP-only cookies), Resend, Cloudinary, Pino |
 | Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, React Router 7, Axios, Sonner |
 
-## Features
-
-| # | Module | Status |
-|---|--------|--------|
-| F01 | Auth — signup, JWT login, forgot/reset password | ? |
-| F02 | Student profile — verification-gated fields, avatar, resume | ? |
-| F03 | Marks — SSC/HSC/Sem 1-8 CGPA, marksheets, auto `avgCgpa` | ? |
-| F04 | Internships — CRUD, certificate upload, faculty verification | ? |
-| F05 | Achievements — CRUD, certificate upload, faculty verification | ? |
-| F06 | Admin Dashboard — approvals, students, faculty, jobs, events | ? |
-| F07 | Faculty Dashboard — verification queue, dept students, HOD mgmt | ? |
-| F08 | Jobs & Applications | ?? |
-| F09 | Events | ?? |
-| F10 | Notifications | ?? |
-| F11 | Alumni mentorship / referrals | ?? |
-
 ## Local Setup
 
 **Prerequisites:** Node.js 20+, PostgreSQL 14+, [Cloudinary](https://cloudinary.com) and [Resend](https://resend.com) accounts.
