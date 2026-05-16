@@ -55,6 +55,18 @@ export const passwordResetEmail = (fullName: string, resetLink: string): { subje
   ),
 });
 
+export const verificationApprovedEmail = (
+  fullName: string,
+  entityType: string
+): { subject: string; html: string } => ({
+  subject: `Your ${entityType} update was approved`,
+  html: wrap(
+    `Hi ${fullName}`,
+    `<p>Your recent update to <strong>${entityType}</strong> has been verified and approved by the faculty.</p>
+     <p>Your profile has been updated accordingly.</p>`
+  ),
+});
+
 export const verificationRejectedEmail = (
   fullName: string,
   entityType: string,

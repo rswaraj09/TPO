@@ -63,9 +63,7 @@ export const signup = async (req: Request, res: Response) => {
     });
 
     const { subject, html } = welcomeEmail(fullName);
-    sendMail({ to: user.emailId, subject, html }).catch((e) =>
-      logger.error({ e }, "Welcome email failed")
-    );
+    await sendMail({ to: user.emailId, subject, html });
 
     return res.status(201).json({
       message: "Account created. Please wait for admin approval before signing in.",
@@ -203,9 +201,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     const resetLink = `${process.env.FRONTEND_URL}/reset-password/${rawToken}`;
     const { subject, html } = passwordResetEmail(user.fullName, resetLink);
-    sendMail({ to: user.emailId, subject, html }).catch((e) =>
-      logger.error({ e }, "Reset email failed")
-    );
+    await sendMail({ to: user.emailId, subject, html });
 
     return res.status(200).json({
       message: "If an account exists, a reset link was sent.",

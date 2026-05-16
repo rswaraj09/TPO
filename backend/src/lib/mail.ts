@@ -1,9 +1,7 @@
 import { Resend } from "resend";
 import logger from "../../utils/logger/logger";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "TPO Vishwaniketan <noreply@example.com>";
+let resend: Resend | null = null;
 
 interface SendMailArgs {
   to: string | string[];
@@ -12,9 +10,20 @@ interface SendMailArgs {
 }
 
 export const sendMail = async ({ to, subject, html }: SendMailArgs): Promise<boolean> => {
+  if (!process.env.RESEND_API_KEY) {
+    logger.error("RESEND_API_KEY is not defined in environment variables");
+    return false;
+  }
+
+  if (!resend) {
+    resend = new Resend(process.env.RESEND_API_KEY);
+  }
+
+  const fromEmail = process.env.RESEND_FROM_EMAIL || "TPO Vishwaniketan <noreply@example.com>";
+
   try {
     const { data, error } = await resend.emails.send({
-      from: FROM_EMAIL,
+      from: fromEmail,
       to,
       subject,
       html,

@@ -169,9 +169,7 @@ export const graduateStudent = async (req: Request, res: Response) => {
 
     const inviteLink = `${process.env.FRONTEND_URL}/alumni/profile`;
     const { subject, html } = alumniInviteEmail(user.fullName, inviteLink);
-    sendMail({ to: user.emailId, subject, html }).catch((e) =>
-      logger.error({ e }, "Alumni invite email failed")
-    );
+    await sendMail({ to: user.emailId, subject, html });
 
     return res.status(200).json({ user: updated });
   } catch (error) {

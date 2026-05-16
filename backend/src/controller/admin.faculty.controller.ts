@@ -97,9 +97,7 @@ export const createFaculty = async (req: Request, res: Response) => {
       tempPassword,
       isHOD ?? false
     );
-    sendMail({ to: emailId, subject, html }).catch((e) =>
-      logger.error({ e }, "Faculty welcome email failed")
-    );
+    await sendMail({ to: emailId, subject, html });
 
     return res.status(201).json({ faculty });
   } catch (error) {

@@ -1,5 +1,7 @@
-import express, { Request, Response } from "express";
 import dotenv from "dotenv";
+dotenv.config();
+
+import express, { Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import logger from "../utils/logger/logger";
@@ -12,8 +14,6 @@ import alumniRoutes from "./routes/alumni";
 import aptitudeRoutes from "./routes/aptitude";
 import publicRoutes from "./routes/public";
 import notificationRoutes from "./routes/notification";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;

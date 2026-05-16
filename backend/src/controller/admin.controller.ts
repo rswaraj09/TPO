@@ -113,9 +113,7 @@ export const approveRegistration = async (req: Request, res: Response) => {
     invalidateCache(`student:detail:${id}`);
 
     const { subject, html } = accountApprovedEmail(user.fullName);
-    sendMail({ to: user.emailId, subject, html }).catch((e) =>
-      logger.error({ e }, "Approved email failed")
-    );
+    await sendMail({ to: user.emailId, subject, html });
 
     return res.status(200).json({ message: "Account approved" });
   } catch (error) {
@@ -150,9 +148,7 @@ export const rejectRegistration = async (req: Request, res: Response) => {
     invalidateCache(`student:detail:${id}`);
 
     const { subject, html } = accountRejectedEmail(user.fullName, parsed.data.reason);
-    sendMail({ to: user.emailId, subject, html }).catch((e) =>
-      logger.error({ e }, "Rejected email failed")
-    );
+    await sendMail({ to: user.emailId, subject, html });
 
     return res.status(200).json({ message: "Account rejected" });
   } catch (error) {

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import logger from "../../utils/logger/logger";
 import { sendMail } from "../lib/mail";
-import { verificationRejectedEmail } from "../lib/emailTemplates";
+import { verificationRejectedEmail, verificationApprovedEmail } from "../lib/emailTemplates";
 import {
   reviewVerificationSchema,
   reviewEntityFlagSchema,
@@ -323,9 +323,13 @@ export const reviewVerificationRequest = async (req: Request, res: Response) => 
         request.entityType,
         remarks
       );
-      sendMail({ to: request.student.emailId, subject, html }).catch((e) =>
-        logger.error({ e }, "Verification rejected email failed")
+      await sendMail({ to: request.student.emailId, subject, html });
+    } else if (status === "APPROVED") {
+      const { subject, html } = verificationApprovedEmail(
+        request.student.fullName,
+        request.entityType
       );
+      await sendMail({ to: request.student.emailId, subject, html });
     }
 
     return res.status(200).json({ request: updated });
@@ -393,9 +397,13 @@ const reviewEntityFlag = async (
         entityType,
         remarks
       );
-      sendMail({ to: record.student.emailId, subject, html }).catch((e) =>
-        logger.error({ e }, `${entityType} rejected email failed`)
+      await sendMail({ to: record.student.emailId, subject, html });
+    } else {
+      const { subject, html } = verificationApprovedEmail(
+        record.student.fullName,
+        entityType
       );
+      await sendMail({ to: record.student.emailId, subject, html });
     }
 
     return res.status(200).json({ message: `${entityType} updated`, isVerified });

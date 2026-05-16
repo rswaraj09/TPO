@@ -291,9 +291,7 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
       existing.job.jobTitle,
       parsed.data.status
     );
-    sendMail({ to: existing.student.emailId, subject, html }).catch((e) =>
-      logger.error({ e }, "Application status email failed")
-    );
+    await sendMail({ to: existing.student.emailId, subject, html });
 
     return res.status(200).json({ application: updated });
   } catch (error) {
